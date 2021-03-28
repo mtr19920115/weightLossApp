@@ -41,6 +41,13 @@
                     android:layout_height="wrap_content"/>
 
                 <Button
+                    android:layout_weight="1"
+                    android:text="Start a new Game"
+                    android:id="@+id/glbt_startNewGame"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <Button
                     android:id="@+id/glbt_back"
                     android:text="Back"
                     android:layout_weight="1"
