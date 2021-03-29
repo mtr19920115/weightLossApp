@@ -88,16 +88,13 @@ public class weightDialog extends Dialog {
                     inputWeight.requestFocus();
                 }else {
                     double bmi=physicalInformationController.getBMI(Double.parseDouble(inputWeight.getText().toString()),Double.parseDouble( inputData.getString("height","")));
-                    User user=new User();
-                    user.setUid(inputData.getInt("uid",0));
-                    user.setWeight(Double.parseDouble(inputWeight.getText().toString()));
-                    user.setBMI(bmi);
-                    UserDAO dao=new UserDAO();
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                           int ok=dao.updateUserWeight(user);
-                           if(ok!=0){
+                           User user=physicalInformationController.updateWeight(
+                                   Double.parseDouble(inputWeight.getText().toString()),bmi,inputData.getInt("uid",0));
+
+                           if(user!=null){
                                mainHandler.post(new Runnable() {
                                    @Override
                                    public void run() {

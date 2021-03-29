@@ -6,14 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".UI.GameList">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
     <TextView
         android:text="Running game List"
@@ -24,24 +22,26 @@
         android:layout_height="wrap_content"/>
 
     <ListView
+        android:layout_weight="3"
         android:id="@+id/gll_gameList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"/>
 
             <LinearLayout
+                android:layout_weight="1.0"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="0dp">
 
                 <Button
                     android:id="@+id/glbt_refresh"
                     android:text="Refresh List"
-                    android:layout_weight="1"
+                    android:layout_weight="1.0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
                 <Button
-                    android:layout_weight="1"
+                    android:layout_weight="1.0"
                     android:text="Start a new Game"
                     android:id="@+id/glbt_startNewGame"
                     android:layout_width="wrap_content"
@@ -57,5 +57,5 @@
             </LinearLayout>
 
         </LinearLayout>
-    </ScrollView>
+
 </LinearLayout>
