@@ -91,5 +91,12 @@ public class GameList extends AppCompatActivity {
                 finish();
             }
         });
+
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initData();
+            }
+        });
     }
 }

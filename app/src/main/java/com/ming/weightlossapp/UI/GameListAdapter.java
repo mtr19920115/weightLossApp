@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ming.weightlossapp.R;
 
@@ -18,8 +19,10 @@ public class GameListAdapter extends BaseAdapter {
 
     List<Map<String,Object>> list;
     LayoutInflater inflater;
+    Context context;
 
     public GameListAdapter(Context context){
+        this.context=context;
         this.inflater=LayoutInflater.from(context);
     }
 
@@ -58,6 +61,19 @@ public class GameListAdapter extends BaseAdapter {
         playerNumber.setText(String.valueOf((Integer) map.get("playerNumber")));
         bmi.setText(String.valueOf((Double) map.get("bmi")));
 
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toJoin(position);
+            }
+        });
+
         return view;
+    }
+
+    private void toJoin(int position){
+        Map<String,Object> map=list.get(position);
+        Toast.makeText(context,"The gameId is: "+String.valueOf((Integer) map.get("gameId"))+"" +
+                "userNumber: "+(String.valueOf((Integer) map.get("playerNumber")))+"BMI: "+(String.valueOf((Double) map.get("bmi"))),Toast.LENGTH_SHORT).show();
     }
 }
