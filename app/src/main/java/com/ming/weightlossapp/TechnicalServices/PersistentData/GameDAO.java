@@ -9,10 +9,11 @@ public class GameDAO extends DatabaseHelper {
        int ok=0;
        try {
            getConnection();
-           String sql="INSERT INTO game (userNumber,BMI) VALUES (?,?)";
+           String sql="INSERT INTO game (userNumber,BMI,hosterId) VALUES (?,?,?)";
            pstmt=(PreparedStatement) conn.prepareStatement(sql);
            pstmt.setInt(1,game.getPlayNumber());
            pstmt.setDouble(2,game.getBmi());
+           pstmt.setInt(3,game.getHolsterId());
            ok=pstmt.executeUpdate();
        }catch (Exception e){
            e.printStackTrace();
@@ -20,6 +21,25 @@ public class GameDAO extends DatabaseHelper {
            closeAll();
        }
        return ok;
+    }
+
+    public int getGameByHosterId(int hosterId){
+        int result=-1;
+        try {
+            getConnection();
+            String sql="SELECT gameId FROM game WHERE hosterId=?";
+            pstmt=(PreparedStatement) conn.prepareStatement(sql);
+            pstmt.setInt(1,hosterId);
+            rs=pstmt.executeQuery();
+            while(rs.next()){
+                result=rs.getInt("gameId");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeAll();
+        }
+        return result;
     }
 
     public List<Game> getGameList(){
@@ -99,5 +119,19 @@ public class GameDAO extends DatabaseHelper {
             closeAll();
         }
         return playerNumber;
+    }
+
+    public void deleteGame(int gameId){
+        try {
+            getConnection();
+            String sql="DELETE FROM game WHERE gameId=?";
+            pstmt=(PreparedStatement) conn.prepareStatement(sql);
+            pstmt.setInt(1,gameId);
+            pstmt.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeAll();
+        }
     }
 }

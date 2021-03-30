@@ -1,5 +1,7 @@
 package com.ming.weightlossapp.TechnicalServices.PersistentData;
 
+import android.util.Log;
+
 import java.sql.PreparedStatement;
 
 public class UserDAO extends DatabaseHelper {
@@ -133,6 +135,7 @@ public class UserDAO extends DatabaseHelper {
         try {
             getConnection();
             String sql="UPDATE user SET joinedGame=?, joinedGameId=? WHERE uid=?";
+           // Log.i("uid,gameId,joinedGame: ",String.valueOf(user.getUid())+String.valueOf(user.getJoinedGameId())+String.valueOf(user.isJoinedGame()));
             pstmt=(PreparedStatement) conn.prepareStatement(sql);
             pstmt.setBoolean(1,user.isJoinedGame());
             pstmt.setInt(2,user.getJoinedGameId());
@@ -144,5 +147,24 @@ public class UserDAO extends DatabaseHelper {
             closeAll();
         }
         return iRow;
+    }
+
+    public int doQuit(int uid){
+        int ok=0;
+        try{
+            getConnection();
+            String sql="UPDATE user SET joinedGame=?,joinedGameId=? WHERE uid=?";
+            pstmt=(PreparedStatement) conn.prepareStatement(sql);
+            pstmt.setBoolean(1,false);
+            pstmt.setInt(2,-1);
+            pstmt.setInt(3,uid);
+            ok=pstmt.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeAll();
+        }
+
+        return ok;
     }
 }

@@ -2,6 +2,7 @@ package com.ming.weightlossapp.Domain.Account;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.ming.weightlossapp.TechnicalServices.PersistentData.User;
 import com.ming.weightlossapp.TechnicalServices.PersistentData.UserDAO;
@@ -59,5 +60,27 @@ public class AccountController {
 
     }
 
+    public static int joinGame(int uid,int gameId){
+
+
+        UserDAO dao=new UserDAO();
+        User user=new User();
+        user.setUid(uid);
+        user.setJoinedGame(true);
+        user.setJoinedGameId(gameId);
+        int userOk=dao.updateJoinedGame(user);
+        Log.i("userOK: ",String.valueOf(userOk));
+        return userOk;
+    }
+
+    public static int quitGame(int uid){
+        UserDAO dao=new UserDAO();
+
+        int ok=0;
+        ok=dao.doQuit(uid);
+
+
+        return ok;
+    }
 
 }

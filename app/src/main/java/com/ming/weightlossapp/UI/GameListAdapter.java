@@ -1,6 +1,8 @@
 package com.ming.weightlossapp.UI;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,17 +11,26 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ming.weightlossapp.Domain.Account.AccountController;
+import com.ming.weightlossapp.Domain.game.MenuController;
 import com.ming.weightlossapp.R;
+import com.ming.weightlossapp.TechnicalServices.PersistentData.GameDAO;
+import com.ming.weightlossapp.TechnicalServices.PersistentData.User;
+import com.ming.weightlossapp.TechnicalServices.PersistentData.UserDAO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
+
+import static android.os.Looper.getMainLooper;
 
 public class GameListAdapter extends BaseAdapter {
 
     List<Map<String,Object>> list;
     LayoutInflater inflater;
     Context context;
+
 
     public GameListAdapter(Context context){
         this.context=context;
@@ -73,7 +84,28 @@ public class GameListAdapter extends BaseAdapter {
 
     private void toJoin(int position){
         Map<String,Object> map=list.get(position);
-        Toast.makeText(context,"The gameId is: "+String.valueOf((Integer) map.get("gameId"))+"" +
-                "userNumber: "+(String.valueOf((Integer) map.get("playerNumber")))+"BMI: "+(String.valueOf((Double) map.get("bmi"))),Toast.LENGTH_SHORT).show();
+        SharedPreferences inputData= context.getApplicationContext().getSharedPreferences("inputData", Context.MODE_PRIVATE);
+        if(inputData.getBoolean("joinedGame",false)){
+            Toast.makeText(context,"You already joined a game",Toast.LENGTH_SHORT).show();
+            return;
+        }else{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                   int gameOk=MenuController.joinGame((Integer) map.get("gameId"));
+                   int userOk=AccountController.joinGame(inputData.getInt("uid",0),(Integer) map.get("gameId"));
+                    if(gameOk!=0&&userOk!=0) {
+                        SharedPreferences.Editor editor=inputData.edit();
+                        editor.putBoolean("joinedGame",true);
+                        editor.putInt("joinedGameId",((Integer) map.get("gameId")));
+                        editor.commit();
+                        Intent intent=new Intent(context,JoinedGame.class);
+                        context.startActivity(intent);
+                    }
+                }
+            }).start();
+            }
+        }
+
     }
-}
+

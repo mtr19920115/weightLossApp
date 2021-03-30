@@ -6,6 +6,15 @@ public class Game implements Serializable {
     double bmi;
     int playNumber;
     int gameId;
+    int holsterId;
+
+    public int getHolsterId() {
+        return holsterId;
+    }
+
+    public void setHolsterId(int holsterId) {
+        this.holsterId = holsterId;
+    }
 
     public double getBmi() {
         return bmi;
