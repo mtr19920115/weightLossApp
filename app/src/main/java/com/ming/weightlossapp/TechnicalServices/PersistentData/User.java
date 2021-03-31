@@ -11,6 +11,16 @@ public class User implements Serializable {
     double height;
     double weight;
     double BMI;
+    double weightChange;
+
+    public double getWeightChange() {
+        return weightChange;
+    }
+
+    public void setWeightChange(double weightChange) {
+        this.weightChange = weightChange;
+    }
+
     boolean joinedGame;
     int joinedGameId;
 

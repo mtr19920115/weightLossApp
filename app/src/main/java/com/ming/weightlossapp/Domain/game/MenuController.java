@@ -4,9 +4,14 @@ import android.util.Log;
 
 import com.ming.weightlossapp.TechnicalServices.PersistentData.Game;
 import com.ming.weightlossapp.TechnicalServices.PersistentData.GameDAO;
+import com.ming.weightlossapp.TechnicalServices.PersistentData.User;
+import com.ming.weightlossapp.TechnicalServices.PersistentData.UserDAO;
 import com.ming.weightlossapp.TechnicalServices.TwitterAPI.TwitterAPI;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,5 +91,33 @@ public class MenuController {
     public static void deleteGame(int gameId){
         GameDAO dao=new GameDAO();
         dao.deleteGame(gameId);
+    }
+
+    public static List<Map<String,Object>> getPlayerList(int gameId){
+        UserDAO dao=new UserDAO();
+        List<User> list=dao.getPlayerList(gameId);
+
+        if(list !=null){
+            Collections.sort(list, new Comparator<User>() {
+                @Override
+                public int compare(User o1, User o2) {
+                    return  (int) (100*o2.getWeightChange()-100*o1.getWeightChange());
+                }
+            });
+
+            List<Map<String,Object>> playerList=new ArrayList<>();
+
+            for(User user:list){
+                Map<String,Object> map=new HashMap<>();
+                map.put("uid",user.getUid());
+                map.put("bmi",user.getBMI());
+                map.put("weightChange",user.getWeightChange());
+
+                playerList.add(map);
+            }
+
+            return playerList;
+        }
+       return null;
     }
 }

@@ -9,12 +9,16 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ming.weightlossapp.Domain.Account.AccountController;
 import com.ming.weightlossapp.Domain.game.MenuController;
 import com.ming.weightlossapp.R;
 
+import java.sql.PreparedStatement;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import twitter4j.TwitterException;
@@ -23,11 +27,17 @@ public class JoinedGame extends AppCompatActivity {
 
     ListView userList;
 
+    TextView gameId;
+
     Button quit;
     Button back;
     Button updateWeight;
 
+    SharedPreferences inputData;
+
     Handler mainHandler;
+
+    List<Map<String,Object>> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +50,44 @@ public class JoinedGame extends AppCompatActivity {
     }
 
     private void initViews(){
+        gameId=(TextView) findViewById(R.id.jgtv_gameId);
         userList=(ListView) findViewById(R.id.jgl_userList);
         quit=(Button) findViewById(R.id.jgbt_quit);
         back=(Button) findViewById(R.id.jgbt_back);
         updateWeight=(Button) findViewById(R.id.jgbt_updateWeight);
+        inputData=(SharedPreferences) getApplicationContext().getSharedPreferences("inputData",MODE_PRIVATE);
         mainHandler=new Handler(getMainLooper());
     }
 
     private void initData(){
+        //show game id
+        gameId.setText(String.valueOf(inputData.getInt("joinedGameId",-1)));
 
+        //show player list
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                list=MenuController.getPlayerList(inputData.getInt("joinedGameId",-1));
+                if(list!=null){
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                           PlayerListAdapter adapter=new PlayerListAdapter(JoinedGame.this);
+                           adapter.setList(list);
+                           userList.setAdapter(adapter);
+                        }
+                    });
+                }else{
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                           Toast.makeText(JoinedGame.this,"Player list load failed",Toast.LENGTH_SHORT).show();
+                           return;
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     private void addListener(){

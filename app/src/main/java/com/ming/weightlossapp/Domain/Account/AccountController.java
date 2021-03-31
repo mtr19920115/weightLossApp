@@ -7,6 +7,9 @@ import android.util.Log;
 import com.ming.weightlossapp.TechnicalServices.PersistentData.User;
 import com.ming.weightlossapp.TechnicalServices.PersistentData.UserDAO;
 
+import java.util.List;
+import java.util.Map;
+
 public class AccountController {
 
 
@@ -27,11 +30,6 @@ public class AccountController {
     }
 
     public int doLogin(String userName,String passWord,Context context){
-
-
-
-
-
         UserDAO dao=new UserDAO();
         User user=dao.getUser(userName);
         if(user!=null){

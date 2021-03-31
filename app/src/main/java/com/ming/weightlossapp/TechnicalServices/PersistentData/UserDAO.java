@@ -3,6 +3,8 @@ package com.ming.weightlossapp.TechnicalServices.PersistentData;
 import android.util.Log;
 
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO extends DatabaseHelper {
 
@@ -166,5 +168,30 @@ public class UserDAO extends DatabaseHelper {
         }
 
         return ok;
+    }
+
+    public List<User> getPlayerList(int gameId){
+        List<User> playerList=new ArrayList<>();
+        try {
+            getConnection();
+            String sql="SELECT * FROM user WHERE joinedGameId=?";
+            pstmt=(PreparedStatement) conn.prepareStatement(sql);
+            pstmt.setInt(1,gameId);
+            rs=pstmt.executeQuery();
+            while(rs.next()){
+                User user=new User();
+                user.setUid(rs.getInt("uid"));
+                user.setBMI(rs.getDouble("BMI"));
+                user.setWeightChange(rs.getDouble("weightChange"));
+
+                playerList.add(user);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeAll();
+        }
+
+        return playerList;
     }
 }
