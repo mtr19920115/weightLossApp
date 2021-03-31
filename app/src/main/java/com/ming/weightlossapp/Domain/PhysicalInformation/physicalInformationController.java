@@ -14,7 +14,6 @@ public class physicalInformationController {
     }
 
     public static User updateWeight(double weight,double BMI,int uid){
-
         User user=new User();
         user.setBMI(BMI);
         user.setWeight(weight);
@@ -26,6 +25,13 @@ public class physicalInformationController {
         }else{
             return null;
         }
+    }
 
+    public static int updateWeightChange(int uid,double currentWeight,double lastWeight){
+        int ok=0;
+        UserDAO dao=new UserDAO();
+        double weightChange=lastWeight-currentWeight;
+        ok=dao.updateWeightChange(uid,weightChange);
+        return ok;
     }
 }

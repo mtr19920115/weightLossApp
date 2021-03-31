@@ -155,11 +155,12 @@ public class UserDAO extends DatabaseHelper {
         int ok=0;
         try{
             getConnection();
-            String sql="UPDATE user SET joinedGame=?,joinedGameId=? WHERE uid=?";
+            String sql="UPDATE user SET joinedGame=?,joinedGameId=?,weightChange=? WHERE uid=?";
             pstmt=(PreparedStatement) conn.prepareStatement(sql);
             pstmt.setBoolean(1,false);
             pstmt.setInt(2,-1);
-            pstmt.setInt(3,uid);
+            pstmt.setDouble(3,0);
+            pstmt.setInt(4,uid);
             ok=pstmt.executeUpdate();
         }catch (Exception e){
             e.printStackTrace();
@@ -193,5 +194,22 @@ public class UserDAO extends DatabaseHelper {
         }
 
         return playerList;
+    }
+
+    public int updateWeightChange(int uid,double weightChange){
+        int ok=0;
+        try {
+            getConnection();
+            String sql="UPDATE user SET weightChange=weightChange+? WHERE uid=?";
+            pstmt=(PreparedStatement) conn.prepareStatement(sql);
+            pstmt.setDouble(1,weightChange);
+            pstmt.setInt(2,uid);
+            ok=pstmt.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeAll();
+        }
+        return ok;
     }
 }

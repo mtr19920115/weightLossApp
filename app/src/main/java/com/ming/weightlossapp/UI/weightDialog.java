@@ -99,6 +99,8 @@ public class weightDialog extends Dialog {
                                    @Override
                                    public void run() {
                                        SharedPreferences.Editor editor = inputData.edit();
+                                       editor.putBoolean("doUpdate",true);
+                                       editor.putString("lastWeight",inputData.getString("weight",""));
                                        editor.putString("weight", inputWeight.getText().toString());
                                        editor.putString("bmi",String.valueOf(user.getBMI()));
                                        editor.apply();
@@ -128,6 +130,8 @@ public class weightDialog extends Dialog {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SharedPreferences.Editor editor=inputData.edit();
+                editor.putBoolean("doUpdate",false);
                 cancel();
             }
         });

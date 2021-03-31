@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ming.weightlossapp.Domain.Account.AccountController;
+import com.ming.weightlossapp.Domain.PhysicalInformation.physicalInformationController;
 import com.ming.weightlossapp.Domain.game.MenuController;
 import com.ming.weightlossapp.R;
 
@@ -120,10 +121,38 @@ public class JoinedGame extends AppCompatActivity {
     private void doUpdateWeight(){
         weightDialog dialog=new weightDialog(JoinedGame.this);
         dialog.show();
+
+
+
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
 
+                if(inputData.getBoolean("doUpdate",false)){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int ok= physicalInformationController.updateWeightChange(inputData.getInt("uid",0),
+                                    Double.parseDouble(inputData.getString("weight","")),Double.parseDouble(inputData.getString("lastWeight","")));
+
+                            if(ok!=0){
+                                mainHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        initData();
+                                    }
+                                });
+                            }else{
+                                mainHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(JoinedGame.this,"weightChange update failed",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
+                    }).start();
+                }
             }
         });
     }

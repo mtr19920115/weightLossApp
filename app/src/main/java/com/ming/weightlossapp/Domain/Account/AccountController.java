@@ -47,6 +47,7 @@ public class AccountController {
                 editor.putString("bmi",String.valueOf(user.getBMI()));
                 editor.putBoolean("joinedGame",user.isJoinedGame());
                 editor.putInt("joinedGameId",user.getJoinedGameId());
+                editor.putString("lastWeight","");
                 editor.commit();
                 return 1;
             }else{
