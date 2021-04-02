@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -48,6 +50,7 @@ public class JoinedGame extends AppCompatActivity {
         initViews();
         initData();
         addListener();
+        timer.start();
     }
 
     private void initViews(){
@@ -205,4 +208,22 @@ public class JoinedGame extends AppCompatActivity {
             }
         }).start();
     }
+
+    private CountDownTimer timer=new CountDownTimer(100*1000,10*1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+            if(list!=null){
+                System.out.println("10 second timer, uid: "+String.valueOf(list.get(list.size()-1).get("uid")));
+                //Toast.makeText(JoinedGame.this,"10 Second count down, the last place uid: "+list.get(list.size()-1).get("uid"),Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onFinish() {
+            //Toast.makeText(JoinedGame.this,"count down finished",Toast.LENGTH_SHORT).show();
+            System.out.println("count down finished over");
+            timer.cancel();
+        }
+    };
 }
