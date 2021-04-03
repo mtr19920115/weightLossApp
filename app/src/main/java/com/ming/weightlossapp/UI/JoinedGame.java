@@ -18,6 +18,7 @@ import com.ming.weightlossapp.Domain.Account.AccountController;
 import com.ming.weightlossapp.Domain.PhysicalInformation.physicalInformationController;
 import com.ming.weightlossapp.Domain.game.MenuController;
 import com.ming.weightlossapp.R;
+import com.ming.weightlossapp.TechnicalServices.PersistentData.User;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -105,11 +106,7 @@ public class JoinedGame extends AppCompatActivity {
         quit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    doQuit();
-                } catch (TwitterException e) {
-                    e.printStackTrace();
-                }
+               doQuit();
             }
         });
 
@@ -160,7 +157,7 @@ public class JoinedGame extends AppCompatActivity {
         });
     }
 
-    private void doQuit() throws TwitterException {
+    private void doQuit() {
 
         SharedPreferences inputData=getApplicationContext().getSharedPreferences("inputData",MODE_PRIVATE);
         SharedPreferences.Editor editor=inputData.edit();
@@ -176,16 +173,8 @@ public class JoinedGame extends AppCompatActivity {
 
                     int playerNumber=MenuController.getPlayerNumber(inputData.getInt("joinedGameId",0));
 
-                    if(playerNumber==0){
+                    if(playerNumber<=0){
                         MenuController.deleteGame(inputData.getInt("joinedGameId",-1));
-                    }
-
-                    MenuController controller=new MenuController();
-                    try {
-                        Random rand=new Random();
-                        controller.postTweet(new String("Test for post Tweet for Weight loss app"+rand.nextInt(1000)+1));
-                    } catch (TwitterException e) {
-                        e.printStackTrace();
                     }
                     mainHandler.post(new Runnable() {
                         @Override
@@ -211,17 +200,84 @@ public class JoinedGame extends AppCompatActivity {
 
     private CountDownTimer timer=new CountDownTimer(100*1000,10*1000) {
         @Override
-        public void onTick(long millisUntilFinished) {
+        public void onTick(long millisUntilFinished){
 
             if(list!=null){
                 System.out.println("10 second timer, uid: "+String.valueOf(list.get(list.size()-1).get("uid")));
-                //Toast.makeText(JoinedGame.this,"10 Second count down, the last place uid: "+list.get(list.size()-1).get("uid"),Toast.LENGTH_SHORT).show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int userQuitOk=AccountController.quitGame((Integer) list.get(list.size()-1).get("uid"));
+                        if(userQuitOk!=0){
+                            int gameQuitOk=MenuController.quitGame(inputData.getInt("joinedGameId",-1));
+                            if(gameQuitOk!=0){
+                                if(MenuController.checkWin(list)){
+
+                                    User user=AccountController.getUserById((Integer) list.get(0).get("uid"));
+
+                                    MenuController controller=new MenuController();
+                                    try {
+                                        Random rand=new Random();
+                                        controller.postTweet(new String("Congratulations, You are the winner of "+inputData.getInt("joinedGameId",-1)+
+                                                " weight loss battle. @"+user.getTwitterAccount()));
+                                    } catch (TwitterException e) {
+                                        e.printStackTrace();
+                                    }
+                                    mainHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(JoinedGame.this,"Got winner, ID is:+"+list.get(0).get("uid"),Toast.LENGTH_SHORT).show();
+                                            doQuit();
+                                        }
+                                    });
+                                }else{
+                                    if((Integer) list.get(list.size()-1).get("uid")==inputData.getInt("uid",-1)){
+                                        mainHandler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                SharedPreferences.Editor editor=inputData.edit();
+                                                editor.putBoolean("joinedGame",false);
+                                                editor.putInt("joinedGameId",-1);
+                                                editor.commit();
+                                                Toast.makeText(JoinedGame.this,"You been dropped from the game",Toast.LENGTH_SHORT).show();
+                                                finish();
+                                            }
+                                        });
+                                    }else{
+                                        mainHandler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                initData();
+                                            }
+                                        });
+                                    }
+
+                                }
+                            }else{
+                                mainHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(JoinedGame.this,"drop player list failed",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                        }else{
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(JoinedGame.this,"drop user failed",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                }).start();
+
             }
         }
 
         @Override
         public void onFinish() {
-            //Toast.makeText(JoinedGame.this,"count down finished",Toast.LENGTH_SHORT).show();
             System.out.println("count down finished over");
             timer.cancel();
         }

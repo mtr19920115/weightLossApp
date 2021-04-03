@@ -120,4 +120,15 @@ public class MenuController {
         }
        return null;
     }
+
+    public static boolean checkWin(List list){
+
+        boolean getWinner=false;
+
+        if(list.size()==1){
+            getWinner=true;
+        }
+
+        return getWinner;
+    }
 }

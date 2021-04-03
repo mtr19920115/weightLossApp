@@ -82,4 +82,10 @@ public class AccountController {
         return ok;
     }
 
+    public static User getUserById(int uid){
+        UserDAO dao=new UserDAO();
+        User user=dao.getUserById(uid);
+        return user;
+    }
+
 }
