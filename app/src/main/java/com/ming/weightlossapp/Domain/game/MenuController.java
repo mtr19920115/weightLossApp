@@ -2,6 +2,7 @@ package com.ming.weightlossapp.Domain.game;
 
 import android.util.Log;
 
+import com.ming.weightlossapp.TechnicalServices.JavaMail.JavaMail;
 import com.ming.weightlossapp.TechnicalServices.PersistentData.Game;
 import com.ming.weightlossapp.TechnicalServices.PersistentData.GameDAO;
 import com.ming.weightlossapp.TechnicalServices.PersistentData.User;
@@ -130,5 +131,15 @@ public class MenuController {
         }
 
         return getWinner;
+    }
+
+    public static void sendMail(String userName,String email,boolean win) throws Exception {
+        if(win){
+            JavaMail.sendMail("Congratulations, You are the winner of weight loss game","Hello "+userName+", You are " +
+                    "the winner of the weight loss game. Keep fighting and keep health!",email);
+        }else{
+            JavaMail.sendMail("You have been dropped from the weight loss game","Hello "+userName+", You have " +
+                    "been dropped from the weight loss game. Don't worry, you will do better in the next time.",email);
+        }
     }
 }

@@ -198,7 +198,7 @@ public class JoinedGame extends AppCompatActivity {
         }).start();
     }
 
-    private CountDownTimer timer=new CountDownTimer(100*1000,10*1000) {
+    private CountDownTimer timer=new CountDownTimer(150*1000,15*1000) {
         @Override
         public void onTick(long millisUntilFinished){
 
@@ -213,14 +213,19 @@ public class JoinedGame extends AppCompatActivity {
                             if(gameQuitOk!=0){
                                 if(MenuController.checkWin(list)){
 
+                                    timer.cancel();
+
                                     User user=AccountController.getUserById((Integer) list.get(0).get("uid"));
 
                                     MenuController controller=new MenuController();
                                     try {
-                                        Random rand=new Random();
                                         controller.postTweet(new String("Congratulations, You are the winner of "+inputData.getInt("joinedGameId",-1)+
                                                 " weight loss battle. @"+user.getTwitterAccount()));
+                                        controller.sendMail(user.getUserName(),user.getEmail(),true);
+
                                     } catch (TwitterException e) {
+                                        e.printStackTrace();
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                     mainHandler.post(new Runnable() {
@@ -232,6 +237,14 @@ public class JoinedGame extends AppCompatActivity {
                                     });
                                 }else{
                                     if((Integer) list.get(list.size()-1).get("uid")==inputData.getInt("uid",-1)){
+
+                                        User user=AccountController.getUserById((Integer) list.get(list.size()-1).get("uid"));
+                                        try {
+                                            MenuController.sendMail(user.getUserName(),user.getEmail(),false);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
                                         mainHandler.post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -240,13 +253,26 @@ public class JoinedGame extends AppCompatActivity {
                                                 editor.putInt("joinedGameId",-1);
                                                 editor.commit();
                                                 Toast.makeText(JoinedGame.this,"You been dropped from the game",Toast.LENGTH_SHORT).show();
+                                                timer.cancel();
                                                 finish();
                                             }
                                         });
                                     }else{
+
+                                        /**
+                                        User user=AccountController.getUserById((Integer) list.get(list.size()-1).get("uid"));
+                                        try {
+                                            MenuController.sendMail(user.getUserName(),user.getEmail(),false);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                         */
+
+
                                         mainHandler.post(new Runnable() {
                                             @Override
                                             public void run() {
+                                                User user=AccountController.getUserById((Integer) list.get(list.size()-1).get("uid"));
                                                 initData();
                                             }
                                         });
